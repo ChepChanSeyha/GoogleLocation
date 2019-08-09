@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:background="@drawable/side_nav_bar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:gravity="center"
+        android:orientation="vertical">
+
+    <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            app:srcCompat="@mipmap/ic_profile"
+            android:contentDescription="@string/nav_header_desc"
+            android:id="@+id/imageView"/>
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Mr. John"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" android:textColor="@android:color/white"
+            android:textStyle="bold" android:textSize="17sp"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Android developer"
+            android:id="@+id/textView" android:textColor="@android:color/white"/>
+
+</LinearLayout>

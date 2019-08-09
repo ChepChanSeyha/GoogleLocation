@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+                android:id="@+id/profile"
+                android:icon="@drawable/ic_action_profile"
+                android:title="Profile"/>
+        <item
+                android:id="@+id/map"
+                android:icon="@drawable/ic_action_map"
+                android:title="Map"/>
+        <item
+                android:id="@+id/earning"
+                android:icon="@drawable/ic_action_earning"
+                android:title="Earning"/>
+        <item
+                android:id="@+id/deposit"
+                android:icon="@drawable/ic_action_deposit"
+                android:title="Deposit"/>
+        <item
+                android:id="@+id/setting"
+                android:icon="@drawable/ic_action_setting"
+                android:title="Setting"/>
+    </group>
+
+</menu>
