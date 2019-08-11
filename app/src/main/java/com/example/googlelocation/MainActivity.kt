@@ -2,89 +2,39 @@ package com.example.googlelocation
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.app.PendingIntent
+import android.app.Dialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import androidx.core.view.GravityCompat
 import androidx.appcompat.app.ActionBarDrawerToggle
-import android.view.MenuItem
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.example.googlelocation.fragments.*
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
+import android.view.MenuItem
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
-import java.lang.StringBuilder
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var locationRequest: LocationRequest
-    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    val itemLatitude = findViewById<TextView>(R.id.latitude)
-    val itemLongitude = findViewById<TextView>(R.id.longitude)
-
-    @Suppress("DEPRECATION")
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-//        fusedLocationClient.lastLocation
-//            .addOnSuccessListener { location : Location? ->
-//                // Got last known location. In some rare situations this can be null.
-//            }
-
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                AlertDialog.Builder(this)
-                    .setTitle("Permission needed")
-                    .setMessage("We need it because we want to know your location.")
-                    .setPositiveButton("OK") { _: DialogInterface, _: Int ->
-                        ActivityCompat.requestPermissions(this,
-                            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                            168)
-                    }
-                    .setNegativeButton("Cancel") { _: DialogInterface, _: Int ->
-                        dismissDialog(168)
-                    }
-                    .create().show()
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                    168)
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            // Permission has already been granted
-            Toast.makeText(this, "You already granted the permission!", Toast.LENGTH_SHORT).show()
-        }
+        fetchLocation()
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -101,7 +51,50 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun fetchLocation() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                AlertDialog.Builder(this)
+                    .setTitle("Required Location Permission")
+                    .setMessage("You have to allow the permission for we get your location.")
+                    .setPositiveButton("OK") { _: DialogInterface, _: Int ->
+                        ActivityCompat.requestPermissions(this,
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                            168)
+                    }
+                    .setNegativeButton("Cancel") { dialogInterface: DialogInterface, _: Int ->
+                        dialogInterface.dismiss()
+                    }
+                    .create()
+                    .show()
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    168)
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location : Location? ->
+                    // Got last known location. In some rare situations this can be null.
+                    var latitude: Double = location!!.latitude
+                    var longitude: Double = location!!.longitude
+                }
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -112,12 +105,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-
                 }
                 return
             }
@@ -128,27 +118,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 // Ignore all other requests.
             }
         }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun updateLocation() {
-        createLocationRequest()
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack())
-    }
-
-    private fun locationCallBack(): PendingIntent? {
-        var intent = Intent(this, MyLocationService::class.java)
-        intent.action = MyLocationService.ACTION_PROCESS_UPDATE
-        return PendingIntent.getBroadcast(this, 168, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
-
-    private fun createLocationRequest() {
-        locationRequest = LocationRequest()
-        locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        locationRequest.interval = 5000
-        locationRequest.fastestInterval = 3000
-
     }
 
     override fun onBackPressed() {
