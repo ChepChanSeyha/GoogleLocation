@@ -24,7 +24,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
-    lateinit var perth: Marker
+    private var marker: Marker? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,14 +78,20 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun getLastKnownLocation() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
-               setMarker(location!!)
+               if (location != null) {
+                   setMarker(location)
+               }
             }
     }
 
+    @SuppressLint("MissingPermission")
     private fun setMarker(location: Location) {
         val latlng = LatLng(location.latitude, location.longitude)
-
-        perth = mMap.addMarker(MarkerOptions().position(latlng).title("Marker in Cambodia"))
+        if(marker == null){
+            val markerOptions = MarkerOptions().position(latlng)
+            marker = mMap.addMarker(markerOptions.position(latlng).draggable(true))
+        }
+        marker?.position = latlng
         moveCamera(location)
     }
 
