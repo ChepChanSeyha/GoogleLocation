@@ -11,13 +11,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="com.google.android.gms.maps.SupportMapFragment">
-
-        <Button
-                android:id="@+id/btn_getDirection"
-                android:text="Get direction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
     </fragment>
+
+    <Button
+            android:id="@+id/btn_getDirection"
+            android:text="Get direction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:id="@+id/btn_stopDirection"
+            android:text="Stop Direction"
+            android:layout_gravity="bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
 </FrameLayout>

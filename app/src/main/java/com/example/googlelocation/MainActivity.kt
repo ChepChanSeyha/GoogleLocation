@@ -7,6 +7,7 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import androidx.core.view.GravityCompat
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
@@ -24,12 +25,13 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Task
+import kotlinx.android.synthetic.main.activity_maps.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    private var requestingLocationUpdates: Boolean = false
 
     @SuppressLint("MissingPermission", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,91 +40,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                AlertDialog.Builder(this)
-                    .setTitle("Required Location Permission")
-                    .setMessage("You have to allow the permission for we get your location.")
-                    .setPositiveButton("OK") { _: DialogInterface, _: Int ->
-                        ActivityCompat.requestPermissions(this,
-                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                            168)
-                    }
-                    .setNegativeButton("Cancel") { dialogInterface: DialogInterface, _: Int ->
-                        dialogInterface.dismiss()
-                    }
-                    .create()
-                    .show()
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    168)
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Show an explanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 168)
         } else {
-            // Permission has already been granted
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location : Location? ->
-                    // Got last known location. In some rare situations this can be null.
-                    val latitude: Double? = location?.latitude
-                    val longitude: Double? = location?.longitude
+            buildLocationRequest()
+            buildLocationCallback()
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-                    val all = findViewById<TextView>(R.id.textLocation)
-
-                    all.text = "$latitude / $longitude"
-                }
-        }
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                for (location in locationResult.locations){
-                    // Update UI with location data
-                    // ...
-                }
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 168)
             }
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
         }
-
-        val builder = LocationSettingsRequest.Builder()
-        val client: SettingsClient = LocationServices.getSettingsClient(this)
-        val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
-
-        task.addOnSuccessListener {
-            // All location settings are satisfied. The client can initialize
-            // location requests here.
-            // ...
-        }
-
-        task.addOnFailureListener { exception ->
-            if (exception is ResolvableApiException){
-                // Location settings are not satisfied, but this can be fixed
-                // by showing the user a dialog.
-                try {
-                    // Show the dialog by calling startResolutionForResult(),
-                    // and check the result in onActivityResult().
-                    exception.startResolutionForResult(this@MainActivity,
-                        168)
-                } catch (sendEx: IntentSender.SendIntentException) {
-                    // Ignore the error.
-                }
-            }
-        }
-
-        updateValuesFromBundle(savedInstanceState)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -138,51 +71,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navView.setNavigationItemSelectedListener(this)
     }
 
-    @SuppressLint("MissingPermission")
-    private fun startLocationUpdates() {
-        fun createLocationRequest() {
-            val locationRequest = LocationRequest.create()?.apply {
-                interval = 10000
-                fastestInterval = 5000
-                priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+    private fun buildLocationCallback() {
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                for (location in locationResult.locations){
+                    // Update UI with location data
+                    // ...
+                    val latitude: Double? = location?.latitude
+                    val longitude: Double? = location?.longitude
+                    val all = findViewById<TextView>(R.id.textLocation)
+                    all.text = "$latitude / $longitude"
+                }
             }
-
-            fusedLocationClient.requestLocationUpdates(locationRequest,
-                locationCallback,
-                null /* Looper */)
         }
     }
 
-    private fun updateValuesFromBundle(savedInstanceState: Bundle?) {
-        savedInstanceState ?: return
-        // Update the value of requestingLocationUpdates from the Bundle.
-        if (savedInstanceState.keySet().contains("REQUESTING_LOCATION_UPDATES_KEY")) {
-            requestingLocationUpdates = savedInstanceState.getBoolean(
-                "REQUESTING_LOCATION_UPDATES_KEY")
+    private fun buildLocationRequest() {
+        locationRequest = LocationRequest.create().apply {
+            interval = 5000
+            fastestInterval = 3000
+            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (requestingLocationUpdates) startLocationUpdates()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        stopLocationUpdates()
-    }
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        outState!!.putBoolean("REQUESTING_LOCATION_UPDATES_KEY", requestingLocationUpdates)
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             168 -> {
                 // If request is cancelled, the result arrays are empty.
