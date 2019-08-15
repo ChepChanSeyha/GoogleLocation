@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/latitude"
-          android:title="Latitude"
+    <item android:id="@+id/phnompenh"
+          android:title="Phnom Penh"
           android:orderInCategory="100"
           app:showAsAction="never"/>
-    <item android:id="@+id/longitude"
-          android:title="Longitude"
+
+    <item android:id="@+id/kompot"
+          android:title="Kompot"
+          android:orderInCategory="100"
+          app:showAsAction="never"/>
+
+    <item android:id="@+id/kandal"
+          android:title="Kandal"
+          android:orderInCategory="100"
+          app:showAsAction="never"/>
+
+    <item android:id="@+id/siemreap"
+          android:title="Siem Reap"
           android:orderInCategory="100"
           app:showAsAction="never"/>
 </menu>

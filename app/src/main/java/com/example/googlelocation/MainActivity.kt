@@ -2,10 +2,7 @@ package com.example.googlelocation
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.DialogInterface
-import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import androidx.core.view.GravityCompat
@@ -18,14 +15,9 @@ import android.view.Menu
 import com.example.googlelocation.fragments.*
 import android.view.MenuItem
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.tasks.Task
-import kotlinx.android.synthetic.main.activity_maps.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -73,6 +65,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun buildLocationCallback() {
         locationCallback = object : LocationCallback() {
+            @SuppressLint("SetTextI18n")
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 for (location in locationResult.locations){
@@ -137,8 +130,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.latitude -> true
-            R.id.longitude -> true
+            R.id.phnompenh -> true
+            R.id.kompot -> true
+            R.id.kandal -> true
+            R.id.siemreap -> true
             else -> super.onOptionsItemSelected(item)
         }
     }
