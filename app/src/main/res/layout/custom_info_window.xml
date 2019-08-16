@@ -9,7 +9,7 @@
         <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp" android:id="@+id/imageView3"
-                android:src="@mipmap/cambodia"
+                android:src="@drawable/ic_action_setting"
                 android:padding="15dp" android:contentDescription="TODO"/>
     </LinearLayout>
     <LinearLayout

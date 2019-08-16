@@ -111,6 +111,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickL
             marker = mMap.addMarker(markerOptions.title("Current Location").snippet("Phnom Penh").position(lateLong1))
             moveCamera(location)
         }
+
+        //
+        marker?.snippet = ""
     }
 
     private fun moveCamera(location: Location){
