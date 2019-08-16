@@ -15,6 +15,7 @@ import android.view.Menu
 import com.example.googlelocation.fragments.*
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
@@ -129,13 +130,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.phnompenh -> true
-            R.id.kompot -> true
-            R.id.kandal -> true
-            R.id.siemreap -> true
-            else -> super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            R.id.phnompenh -> {
+                Toast.makeText(this, "Phnom Penh", Toast.LENGTH_LONG).show()
+            }
+            R.id.kampot -> {
+                Toast.makeText(this, "Kampot", Toast.LENGTH_LONG).show()
+            }
+            R.id.kandal -> {
+                Toast.makeText(this, "Kandal", Toast.LENGTH_LONG).show()
+            }
+            R.id.siemreap -> {
+                Toast.makeText(this, "Siem Reap", Toast.LENGTH_LONG).show()
+            }
+            else -> {
+                Toast.makeText(this, "No select", Toast.LENGTH_LONG).show()
+            }
         }
+
+        return true
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

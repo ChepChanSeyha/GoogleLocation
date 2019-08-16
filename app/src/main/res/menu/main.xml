@@ -6,8 +6,8 @@
           android:orderInCategory="100"
           app:showAsAction="never"/>
 
-    <item android:id="@+id/kompot"
-          android:title="Kompot"
+    <item android:id="@+id/kampot"
+          android:title="Kampot"
           android:orderInCategory="100"
           app:showAsAction="never"/>
 

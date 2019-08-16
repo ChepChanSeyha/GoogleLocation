@@ -22,12 +22,12 @@ class InfoWindow(context: Context) : GoogleMap.InfoWindowAdapter {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val v = inflater.inflate(R.layout.custom_info_window, null)
 
-        val tvGir = v.findViewById<View>(R.id.title) as TextView
+        val title = v.findViewById<View>(R.id.title) as TextView
         val tvDetails1 = v.findViewById<View>(R.id.des1) as TextView
         val tvDetails2 = v.findViewById<View>(R.id.des2) as TextView
-        tvGir.text = "Cambodia"
-        tvDetails1.text = "Your current location in cambodia"
-        tvDetails2.text = "You stay in phnom penh"
+        title.text = marker.title
+        tvDetails1.text = marker.snippet.toString()
+        tvDetails2.text = marker.position.toString()
         return v
     }
 
