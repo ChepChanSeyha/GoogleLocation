@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import com.example.googlelocation.MarkerInfo
 import com.example.googlelocation.R
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
@@ -15,6 +17,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_maps.*
 
 
@@ -108,12 +111,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickL
 
         if(marker == null){
             val markerOptions = MarkerOptions().position(lateLong1)
-            marker = mMap.addMarker(markerOptions.title("Current Location").snippet("Phnom Penh").position(lateLong1))
+            marker = mMap.addMarker(markerOptions.title("Current Location"))
             moveCamera(location)
         }
 
         //
-        marker?.snippet = ""
+        val information = MarkerInfo("Your current location", "Phnom Penh, Cambodia", R.mipmap.cambodia)
+
+        val gSon = Gson()
+
+        val jsonString = gSon.toJson(information)
+        marker?.snippet = jsonString
     }
 
     private fun moveCamera(location: Location){

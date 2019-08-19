@@ -1,5 +1,6 @@
 package com.example.googlelocation.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -20,28 +21,42 @@ class InfoWindow(context: Context) : GoogleMap.InfoWindowAdapter {
         return null
     }
 
+    @SuppressLint("ResourceType")
     override fun getInfoContents(marker: Marker): View {
 
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val v = inflater.inflate(R.layout.custom_info_window, null)
 
         val title = v.findViewById<TextView>(R.id.title)
-        val tvDetails1 = v.findViewById<TextView>(R.id.des1)
-        val position1 = v.findViewById<TextView>(R.id.des2)
+        val tvDetails1 = v.findViewById<TextView>(R.id.description)
         val image = v.findViewById<ImageView>(R.id.imageView3)
 
-        val imageV = image.setImageResource(R.mipmap.cambodia).toString()
-        val latLng = marker.position.toString()
-//        val gg = marker.snippet
+//        val jsonString = marker.snippet
+//        val titleMarker = marker.title
 
-        val gson = Gson()
-        val information = MarkerInfo("Your current location", "Phnom Penh, Cambodia", latLng, imageV)
+        // jsonString -> Object
+//        val gSon = Gson()
+//        val stringJson = """{
+//            "title": "Your current location",
+//            "description1": "Phnom Penh, Cambodia",
+//            "imageView": "cbvzxcvzsv"
+//            }"""
+//
+//        val obj = gSon.fromJson(stringJson, MarkerInfo::class.java)
+//
+//        title.text = obj.title
+//        tvDetails1.text = obj.description1
+//        obj.imageView = image.setImageResource(R.mipmap.cambodia).toString()
 
-        val json = gson.toJson(information)
+        val jsonString = marker.snippet
+        val gSon = Gson()
 
-        title.text = information.title
-        tvDetails1.text = information.description1
-        position1.text = information.latLng
+        val obj = gSon.fromJson(jsonString, MarkerInfo::class.java)
+
+        title.text = obj.title
+        tvDetails1.text = obj.description1
+        image.setImageDrawable(context.getDrawable(obj.imageId))
+
 
         return v
     }

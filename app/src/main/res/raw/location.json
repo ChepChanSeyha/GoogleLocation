@@ -1,0 +1,5 @@
+{
+      "title": "Your current location",
+      "description1": "Phnom Penh, Cambodia",
+      "latLng": "marker.position.toString()"
+}
